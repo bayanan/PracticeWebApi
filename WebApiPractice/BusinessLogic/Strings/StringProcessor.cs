@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,12 @@ namespace WebApiPractice.BusinessLogic.Strings
 {
     public class StringProcessor
     {
+        private IConfiguration Configuration;
+
+        public StringProcessor(IConfiguration configuration) {
+            Configuration = configuration;
+        }
+        
         public static StringBuilder GetIncorrectSymbols(string inputString)
         {
             string correctSymbols = "abcdefghijklmnopqrstuvwxyz";
@@ -24,8 +31,6 @@ namespace WebApiPractice.BusinessLogic.Strings
                     incorrectSymbols.AppendFormat("{0}, ", ch);
                 }
             }
-
-
 
             return incorrectSymbols;
         }
@@ -85,10 +90,9 @@ namespace WebApiPractice.BusinessLogic.Strings
             return regex.Match(inputString).Groups[1].Value;
         }
 
-        public static string DeleteRandomChar(string inputString)
+        public static string DeleteRandomChar(string inputString, string randomApi)
         {
-            int value = inputString.Length - 1;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create($"https://csrng.net/csrng/csrng.php?min=0&max={value}");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create($"{randomApi}");
             request.Method = "GET";
             request.ContentType = "application/json";
 
@@ -103,7 +107,7 @@ namespace WebApiPractice.BusinessLogic.Strings
                     return inputString.Remove(randomResponse.random, 1);
             }
             var random = new Random();
-            return inputString.Remove(random.Next(0, value), 1);
+            return inputString.Remove(random.Next(0, inputString.Length - 1), 1);
         }
     }
 }
