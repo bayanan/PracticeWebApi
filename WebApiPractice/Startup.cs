@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApiPractice.BusinessLogic.Limits;
+using WebApiPractice.Middleware;
 
 namespace WebApiPractice
 {
@@ -27,6 +29,7 @@ namespace WebApiPractice
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(Configuration);
+            services.AddSingleton<RequestLimiter>(sp => RequestLimiter.GetRequestLimiter(Configuration.GetSection("ParallelLimit").Get<int>()));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -45,6 +48,8 @@ namespace WebApiPractice
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<RequestLimiterMiddleware>();
 
             app.UseRouting();
 

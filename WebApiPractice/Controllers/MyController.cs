@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using WebApiPractice.BusinessLogic.Strings;
 using WebApiPractice.BusinessLogic.Sorts;
 using Microsoft.Extensions.Configuration;
+using WebApiPractice.BusinessLogic.Limits;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Threading;
 
 namespace WebApiPractice.Controllers
 {
@@ -16,6 +19,8 @@ namespace WebApiPractice.Controllers
     public class MyController : ControllerBase
     {
         private IConfiguration Configuration;
+        //  var limiter = new RequestLimiter(maxRequestsCount);
+        ActionExecutingContext context;
 
         public MyController(IConfiguration configuration) {
             Configuration = configuration;
@@ -42,6 +47,8 @@ namespace WebApiPractice.Controllers
 
             string ProcessedString = StringProcessor.GetProcessedString(text);
             string RandomGeneratorApi = Configuration.GetSection("RandomApi").Get<string>() + $"?min=0&max={ProcessedString.Length - 1}";
+
+            Thread.Sleep(10000);
 
             return Ok(new StringResponse {
                 Status = "success",
