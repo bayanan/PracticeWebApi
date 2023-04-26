@@ -30,7 +30,7 @@ namespace WebApiPractice.BusinessLogic.Sorts
                 treeNode.Insert(inputString[i]);
             }
 
-            return new string(treeNode.Transform());
+            return (new string(treeNode.Transform())).Trim();
         }
 
         public void Insert(char data)
